@@ -1,0 +1,83 @@
+# GET http://localhost:3000/api/array-roles
+
+
+
+# PUT http://localhost:3000/api/update-employee/51
+# Content-Type: application/json
+
+# {
+#     "id": 51,
+#     "name": "Abdi Megersa Updated",
+#     "email": "reb@gmail.com",
+#     "gender": "male",
+#     "age": 13,
+#     "roleId": 4
+# }
+
+# DELETE http://localhost:3000/api/delete-role/6
+
+# POST http://localhost:3000/api/new-role
+# Content-Type: application/json
+
+# {
+#     "id": 55,
+#     "expanded": true,
+#     "data": {
+#         "employee": [],
+#         "name": "Good postion",
+#         "description": "CTO",
+#         "constraint": 5
+#     },
+#     "children": [],
+#     "parentId": 71
+# }
+
+# PUT http://localhost:3000/api/update-role/55
+# Content-Type: application/json
+
+# {
+#     "id": 55,
+#     "expanded": true,
+#     "data": {
+#         "employee": [],
+#         "name": "COO",
+#         "description": "Cheif Operation One",
+#         "constraint": 2,
+#         "parentId": 1
+#     },
+#     "children": []
+# }
+
+
+# POST http://localhost:3000/api/new-employee
+# Content-Type: application/json
+
+# {
+#   "id": 26,
+#   "roleId": 1,
+#   "firstName": "David",
+#   "lastName": "William",
+#   "age": 30,
+#   "email": "davewil.doe@example.com",
+#   "gender": "Male",
+#   "dob": "1990-01-01",
+#   "phoneNumbers": "+251981234321"
+# }
+
+
+# PUT http://localhost:3000/api/update-employee/23
+# Content-Type: application/json
+
+# {
+#     "id": 23,
+#     "roleId": 55,
+#     "firstName": "James",
+#     "lastName": "Williams",
+#     "age": 30,
+#     "email": "jamewash.doe@example.com",
+#     "gender": "Male",
+#     "dob": "1990-01-01",
+#     "phoneNumbers": "+251981234321"
+# }
+
+DELETE http://localhost:3000/api/delete-employee/26
