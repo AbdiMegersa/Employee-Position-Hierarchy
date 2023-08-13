@@ -1,4 +1,5 @@
 export const convertNodeToArray = (node) => {
+    // console.log(node)
     const result = [];
   
     function traverse(node) {
@@ -11,19 +12,18 @@ export const convertNodeToArray = (node) => {
     }
   
     traverse(node);
-  
+    // console.log(result)
     return result;
 }
 
 
-export const addNodeToNestedStructure = (nestedStructure, newNode, parentId) => {
+export const addNodeToNestedStructure = (nestedStructure, newNode) => {
     // console.log('newNode',newNode)
-    // console.log(typeof nestedStructure.id, 'type')
-    if (nestedStructure.id === parentId) {
+    if (nestedStructure.data.id === newNode.data.parentId) {
         nestedStructure.children.push(newNode);
     } else if (nestedStructure.children) {
         nestedStructure.children.forEach(child => {
-            addNodeToNestedStructure(child, newNode, parentId);
+            addNodeToNestedStructure(child, newNode);
         });
     }
     return nestedStructure;
@@ -31,7 +31,7 @@ export const addNodeToNestedStructure = (nestedStructure, newNode, parentId) => 
 
 // adding the id of new employee to the prerty employee []
 export const addEmployee = (nestedStructure, roleId, newId) => {
-    if (nestedStructure.id === roleId) {
+    if (nestedStructure.data.id === roleId) {
       nestedStructure.data.employee.push(newId);
     } else if (nestedStructure.children) {
       nestedStructure.children.forEach(child => {
@@ -41,8 +41,9 @@ export const addEmployee = (nestedStructure, roleId, newId) => {
     return nestedStructure;
   };
 
+
 export const deleteEmployee = (nestedStructure, roleId, empId) => {
-  if (nestedStructure.id === roleId){
+  if (nestedStructure.data.id === roleId){
     const updatedEmployeeArray = nestedStructure.data.employee.filter(id => id !== empId)
     nestedStructure.data.employee = updatedEmployeeArray
   }else if (nestedStructure.children){
@@ -60,7 +61,7 @@ export const deleteLeafRole = (nestedStructure, nodeId) => {
     });
   }
 
-  if (nestedStructure.children.length === 0 && nestedStructure.id === nodeId) {
+  if (nestedStructure.children.length === 0 && nestedStructure.data.id === nodeId) {
     return null; // Remove the leaf node by returning null
   }
 
@@ -69,7 +70,7 @@ export const deleteLeafRole = (nestedStructure, nodeId) => {
 
 
 export const replaceNodeById = (nestedStructure, nodeId, updatedProperties) => {
-    if (nestedStructure.id === nodeId) {
+    if (nestedStructure.data.id === nodeId) {
       return {...nestedStructure, data: {...updatedProperties.data}}
     } else if (nestedStructure.children) {
       const updatedChildren = nestedStructure.children.map(child =>
@@ -94,7 +95,7 @@ export const updateEmployee = (employeeArray, employeeId, employeeDetails) => {
 }
 
 export const popRole = (nestedStructure, node) => {
-  if (nestedStructure.id === node.data.parentId) {
+  if (nestedStructure.data.id === node.data.parentId) {
     const newChildren = nestedStructure.children.filter(r => r.id !== node.id);
     nestedStructure = { ...nestedStructure, children: [...newChildren] };
   } else if (nestedStructure.children && nestedStructure.children.length > 0) {

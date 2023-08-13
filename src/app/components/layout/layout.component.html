@@ -1,0 +1,23 @@
+<div class="flex justify-center">
+    <nz-layout class="h-full bg-white border-x ">
+        <nz-header class="flex justify-between items-center bg-blue-500 p-0">
+            <div class="logo">
+                <a routerLink="">
+                    <h1 class="text-2xl text-white px-5">Work Force</h1>
+                </a>
+            </div>
+            <div class="bg-blue-500 text-white flex items-center h-full p-0 pt-2">
+                    <a routerLink="roles" routerLinkActive="bg-white text-blue-500" class="mx-3 p-2 rounded-t-lg h-full flex items-center hover:underline text-md ">Roles</a>
+                    <a routerLink="employees" routerLinkActive="bg-white text-blue-500" class="mx-3 p-2 rounded-t-lg h-full flex items-center hover:underline text-md">Employee list</a>
+            </div>
+        </nz-header>
+        <nz-content class="min-h-full">
+            <div class="bg-white flex">
+                <div class="inner-content h-full border border-gray-200 my-5 mx-5 p-5 bg-gray-100 flex-grow rounded-lg">
+                    <router-outlet></router-outlet>
+                </div>
+            </div>
+        </nz-content>
+        <nz-footer class="text-center ">Work Force ©2023 By Abdi Megersa</nz-footer>
+    </nz-layout>
+</div>

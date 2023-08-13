@@ -7,28 +7,53 @@ import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { en_US } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IconsProviderModule } from './icons-provider.module';
-import { NzLayoutModule } from 'ng-zorro-antd/layout';
-import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { NgZorroAntModule} from './ng-zorro-ant.module'
+
+// Prime Ng imports
+import { OrganizationChartModule } from 'primeng/organizationchart';
+import { LayoutComponent } from './components/layout/layout.component';
+import { RolesComponent } from './components/roles/roles.component';
+import { EmployeesComponent } from './components/employees/employees.component';
+import { ViewModalComponent } from './components/roles/components/view-modal/view-modal.component';
+import { DeleteModalComponent } from './components/roles/components/delete-modal/delete-modal.component';
+import { EditModalComponent } from './components/roles/components/edit-modal/edit-modal.component';
+
+import { NgxsModule } from '@ngxs/store';
+import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { RoleState } from './state/role.state'
+// import { NgxMaskModule } from 'ngx-mask';
 
 registerLocaleData(en);
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    LayoutComponent,
+    RolesComponent,
+    EmployeesComponent,
+    ViewModalComponent,
+    DeleteModalComponent,
+    EditModalComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
     IconsProviderModule,
-    NzLayoutModule,
-    NzMenuModule
+    NgZorroAntModule,
+    OrganizationChartModule,
+    NgxsModule.forRoot([
+      RoleState
+    ]),
+    NgxsReduxDevtoolsPluginModule.forRoot(),
+    // NgxMaskModule.forRoot()
   ],
   providers: [
     { provide: NZ_I18N, useValue: en_US }

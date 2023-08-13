@@ -1,4 +1,4 @@
-# GET http://localhost:3000/api/array-roles
+# GET http://localhost:3000/api/all
 
 
 
@@ -60,7 +60,7 @@
 #   "age": 30,
 #   "email": "davewil.doe@example.com",
 #   "gender": "Male",
-#   "dob": "1990-01-01",
+#   "age": 34,
 #   "phoneNumbers": "+251981234321"
 # }
 
@@ -80,4 +80,14 @@
 #     "phoneNumbers": "+251981234321"
 # }
 
-DELETE http://localhost:3000/api/delete-employee/26
+# DELETE http://localhost:3000/api/delete-employee/26
+
+
+# PATCH http://127.0.0.1:3000/roles/600ec48e-57a2-4e8c-99fa-80973baec2cc
+# Content-type :application / json
+
+# {
+#     "name": "QAT Engineer",
+#     "Description": "A QA engineer creates tests that identify issues with software before a product launch.",
+#     "parentId": "ca0eed93-27b6-45ca-a5ee-f0770997defd"
+# }

@@ -1,0 +1,13 @@
+
+.p-organizationchart-lines {
+    border-color: red !important;
+}
+
+.p-organizationchart-line-right {
+    border-color: red !important;
+}
+
+.blur {
+    filter: blur(1px);
+  }
+  

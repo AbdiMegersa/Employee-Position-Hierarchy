@@ -1,0 +1,102 @@
+<ng-template #loading>
+    Loadin...
+</ng-template>
+<nz-table *ngIf="!loadingEmployees && listOfData; else loading" #table [nzData]="listOfData" [nzPageSize]="pageSize" [nzPageIndex]="pageIndex"
+    (nzPageIndexChange)="onPageIndexChange($event)">
+    <thead>
+        <tr>
+            <th nzCheckbox></th>
+            <th>#</th>
+            <th *ngFor="let column of listOfColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+                [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+                [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn">
+                {{ column.name }}
+            </th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of table.data; let i = index">
+            <td nzCheckbox></td>
+            <td>{{ i + 1 + (pageIndex - 1) * pageSize }}</td>
+            <td>{{ data.id }}</td>
+            <td>{{ data.fullName }}</td>
+            <td>{{ data.email }}</td>
+            <td>{{ data.role.name }}</td>
+            <td>
+                <button (click)="showEmployeeEditModal(data)" nz-button nzType="link">view/edit</button>
+                <button (click)="showDeleteModal(data)" nz-button nzType="link" nzDanger>delete</button>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+
+
+<nz-modal [(nzVisible)]="isEmployeeEditFormVisible" nzTitle="Employee Information"
+    (nzOnCancel)="handleEmployeeEditCancel()">
+    <div *nzModalContent>
+        <form [formGroup]="employeeEditForm" nz-form>
+            <nz-form-item>
+                <nz-form-label nzFor="firstName" class="font-bold">First Name</nz-form-label>
+                <nz-form-control nzHasFeedback nzErrorTip="first name is required">
+                    <input nz-input formControlName="firstName" id="firstName" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzFor="lastName" class="font-bold">Last Name</nz-form-label>
+                <nz-form-control nzHasFeedback nzErrorTip="Last name is required">
+                    <input nz-input formControlName="lastName" id="lastName">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzFor="email" class="font-bold">Email</nz-form-label>
+                <nz-form-control nzHasFeedback nzErrorTip="Invalid Email">
+                    <input nz-input formControlName="email" id="email">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzFor="phone" class="font-bold">phone</nz-form-label>
+                <nz-form-control nzHasFeedback nzErrorTip="Invalid Phone Number">
+                    <input nz-input formControlName="phone" id="phone">
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzFor="gender" class="font-bold">Gender</nz-form-label>
+                <nz-form-control nzErrorTip="Gender is required">
+                    <nz-select formControlName="gender" id="gender" [(ngModel)]="employeeEditForm.value.gender">
+                        <nz-option [nzLabel]="'Male'" [nzValue]="'M'"></nz-option>
+                        <nz-option [nzLabel]="'Female'" [nzValue]="'F'"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzFor="roleId" class="font-bold">Role</nz-form-label>
+                <nz-form-control nzErrorTip="Role is required">
+                    <nz-select formControlName="roleId" id="roleId" [(ngModel)]="employeeEditForm.value.roleId" >
+                        <nz-option *ngFor="let role of flatRoles" [nzLabel]="role.name"
+                            [nzValue]="role.id"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+            <!-- {{ employeeEditForm.value | json }} -->
+        </form>
+    </div>
+    <div *nzModalFooter>
+        <button nz-button nzType="default" (click)="handleEmployeeEditCancel()">Cancel</button>
+        <button nz-button nzType="primary" (click)="handleEmployeeEditOk()" [nzLoading]="isEmployeeEditLoading">
+            Save Changes
+        </button>
+    </div>
+</nz-modal>
+
+<nz-modal *ngIf="selectedDeleteNode" [(nzVisible)]="isDeleteModalVisible" nzTitle="Delete Employee" (nzOnCancel)="handleDeleteCancel()">
+    <div *nzModalContent>
+        Are you sure you want to delete employee: <span class="font-bold">{{ selectedDeleteNode.fullName }} ? </span>
+    </div>
+    <div *nzModalFooter>
+        <button nz-button nzType="default" (click)="handleDeleteCancel()">Cancel</button>
+        <button nz-button class="bg-red-500 text-white" (click)="handleDeleteOk()" [nzLoading]="isDeleteLoading">
+            Delete
+        </button>
+    </div>
+</nz-modal>
