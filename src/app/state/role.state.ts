@@ -1,20 +1,25 @@
-import { State, Select, StateContext, Action } from '@ngxs/store';
+import { State, Select, StateContext, Action, createSelector} from '@ngxs/store';
 import { Injectable } from '@angular/core';
-import { tap } from 'rxjs/operators';
+import { tap, catchError } from 'rxjs/operators';
+import { of } from 'rxjs'
 import { EmployeeApi } from '../models/Role'
 
-import { FetchAll, FetchFlatRoles, FetchRolesSuccess, FetchFlatRolesSuccess, FetchEmployees, FetchEmployeesSuccess } from './role.actions';
+import { FetchAll, FetchFlatRoles, FetchRolesSuccess, FetchFlatRolesSuccess, FetchEmployees, FetchEmployeesSuccess, FetchRolesFail, FetchEmployeesFail, FetchFlatRolesFail } from './role.actions';
 import { RoleService } from '../services/role.service';
 
-import { RoleTreeNode, FlatRole } from "../models/Role"
+import { RoleTreeNode, FlatRole, EmployeeBulk,  } from "../models/Role"
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 export interface RoleStateModel {
-  roles: any;
-  flatRoles: any;
+  roles: Array<RoleTreeNode>;
+  flatRoles: Array<FlatRole>;
+  employees: Array<EmployeeBulk>;
   loadingFlat: boolean;
-  employees: any;
   loadingEmployees: boolean;
   loading: boolean;
+  rolesError: string;
+  flatRolesError: string;
+  employeesError: string
   error: string;
 }
 
@@ -27,23 +32,34 @@ export interface RoleStateModel {
     loadingFlat: false,
     loadingEmployees: false,
     loading: false,
+    rolesError: "",
+    flatRolesError: "",
+    employeesError: "",
     error: ''
   },
 })
 @Injectable()
 export class RoleState {
-  constructor(private roleService: RoleService) { }
+  constructor(private roleService: RoleService, private message: NzMessageService) { }
+
+  static getEmployees(state: RoleStateModel) {
+    return state.employees;
+  }
+
+  static getFlatRoles() {
+    return createSelector([RoleState], (state: RoleStateModel) => state.flatRoles);
+  }
+
+  static employeesSelector() {
+    return createSelector([RoleState], (state: RoleStateModel) => state.employees);
+  }
 
   @Select((state: { role: RoleStateModel }) => state.role.roles)
   static getRoles(state: RoleStateModel) {
     return state.roles;
   }
 
-  @Select((state: { role: RoleStateModel }) => state.role.employees)
-  static getEmployees(state: RoleStateModel) {
-    return state.employees;
-  }
-
+ 
   @Action(FetchAll)
   fetchAll(ctx: StateContext<RoleStateModel>) {
     ctx.patchState({ loading: true });
@@ -51,8 +67,12 @@ export class RoleState {
     return this.roleService.fetchAllRoles().pipe(
       tap((data: RoleTreeNode[]) => {
         // console.log('data from state ', data)
-        console.log('data from api', data)
-        ctx.dispatch(new FetchRolesSuccess(data));
+        if(data){
+          console.log('data from api', data)
+          ctx.dispatch(new FetchRolesSuccess(data));
+        }else{
+          ctx.dispatch(new FetchRolesFail("Roles Couldnt be fetched from database"))
+        }
       })
     );
   }
@@ -63,8 +83,12 @@ export class RoleState {
 
     return this.roleService.fetchFlatRoles().pipe(
       tap((data: FlatRole[]) => {
-        console.log('data from api', data)
-        ctx.dispatch(new FetchFlatRolesSuccess(data));
+        if(data){
+          console.log('data from api', data)
+          ctx.dispatch(new FetchFlatRolesSuccess(data));
+        }else{
+          ctx.dispatch(new FetchFlatRolesFail("Flat Roles Couldn\'t be fetched from database"))
+        }
       })
     );
   }
@@ -73,6 +97,7 @@ export class RoleState {
   fetchFlatRolesSuccess(ctx: StateContext<RoleStateModel>, {payload}: FetchFlatRolesSuccess ){
     ctx.patchState({
       flatRoles: payload,
+      flatRolesError: "",
       loadingFlat: false,
     })
   }
@@ -83,8 +108,12 @@ export class RoleState {
 
     return this.roleService.fetchEmployees().pipe(
       tap((data: EmployeeApi) => {
-        console.log('employee data from api ', data);
-        ctx.dispatch(new FetchEmployeesSuccess(data.results))
+        if(data.results){
+          console.log('employee data from api ', data);
+          ctx.dispatch(new FetchEmployeesSuccess(data.results))
+        }else{
+          ctx.dispatch(new FetchEmployeesFail("Employees Couldn\'t be fetched from Database"))
+        }
       })
     )
 
@@ -98,6 +127,7 @@ export class RoleState {
     console.log('payload looks like: ', payload);
     ctx.patchState({
       roles: payload,
+      rolesError: "",
       loading: false,
     });
   }
@@ -106,7 +136,32 @@ export class RoleState {
   fetchEmployeesSuccess(ctx: StateContext<RoleStateModel>, {payload}: FetchEmployeesSuccess){
     ctx.patchState({
       employees: payload,
+      employeesError: "",
       loadingEmployees :false
+    })
+  }
+
+  @Action(FetchRolesFail)
+  fetchRolesFail(ctx: StateContext<RoleStateModel>, {payload}: FetchRolesFail) {
+    this.message.error('Roles Couldnot be fetched')
+    ctx.patchState({
+      rolesError: payload
+    })
+  }
+
+  @Action(FetchEmployeesFail)
+  fetchEmployeesFail(ctx: StateContext<RoleStateModel>, {payload}: FetchEmployeesFail) {
+    this.message.error('Employess Couldnot be fetched')
+    ctx.patchState({
+      employeesError: payload
+    })
+  }
+
+  @Action(FetchFlatRolesFail)
+  fetchFlatRolesFail(ctx: StateContext<RoleStateModel>, {payload}: FetchFlatRolesFail) {
+    this.message.error('Flat Roles Couldnot be fetched')
+    ctx.patchState({
+      flatRolesError: payload
     })
   }
 

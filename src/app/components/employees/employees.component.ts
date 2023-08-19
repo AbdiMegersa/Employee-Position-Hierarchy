@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { NzTableFilterFn, NzTableFilterList, NzTableSortFn, NzTableSortOrder } from 'ng-zorro-antd/table';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms'
-import { Store } from '@ngxs/store'
+import { Store, Select } from '@ngxs/store'
 import { EmployeeBulk, FlatRole } from '../../models/Role'
 import { phoneValidator } from '../roles/phone-validator'
 import { RoleService } from 'src/app/services/role.service';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { FetchAll, FetchEmployees, FetchFlatRoles } from 'src/app/state/role.actions';
-import { of } from 'rxjs'
+import { of, Observable } from 'rxjs'
 import { catchError } from 'rxjs/operators';
-
+import { RoleState } from '../../state/role.state'
 
 interface DataItem {
   id: number;
@@ -36,8 +36,8 @@ interface ColumnItem {
   templateUrl: './employees.component.html',
   styleUrls: ['./employees.component.css']
 })
-export class EmployeesComponent implements OnInit {
 
+export class EmployeesComponent implements OnInit {
 
   // filterFunc: NzTableFilterFn<DataItem>;
 
@@ -61,15 +61,7 @@ export class EmployeesComponent implements OnInit {
   pageIndex = 1;
   pageSize = 10;
   listOfColumns: ColumnItem[] = [
-    {
-      name: 'ID',
-      sortOrder: null,
-      sortFn: null,
-      sortDirections: [null],
-      filterMultiple: false,
-      listOfFilter: [],
-      filterFn: null
-    },
+
     {
       name: 'Name',
       sortOrder: 'ascend',
@@ -99,8 +91,15 @@ export class EmployeesComponent implements OnInit {
     }
   ];
 
+  // Search input string 
+  searchValue: string = "";
+
+  // variable for saving list of employees of type EmployeeBulk
   listOfData: Array<EmployeeBulk> = [];
+
+  // variable for storing flat roles
   listOfRoles: Array<any> = []
+  
   loadingEmployees: boolean = false;
 
   employeeEditForm: FormGroup;
@@ -112,6 +111,9 @@ export class EmployeesComponent implements OnInit {
 
   selectedDeleteNode!: any;
   flatRoles!: Array<FlatRole>;
+  employeesError: string = "";
+
+  @Select(RoleState.employeesSelector()) employees$!: Observable<any[]>;
 
   ngOnInit(): void {
     this.store.select(state => state.role).subscribe(state => {
@@ -119,9 +121,27 @@ export class EmployeesComponent implements OnInit {
       this.listOfRoles = state.arrayRoles;
       this.loadingEmployees = state.loadingEmployees;
       this.flatRoles = state.flatRoles;
+      this.employeesError = state.employeesError;
+    })
+  
+  }
+
+  // Function to filter the list
+  filterList(): void {
+    //  const stateEmployees$ = this.store.selectOnce()
+    this.employees$.subscribe(data => {
+      this.listOfData = data.filter((item: EmployeeBulk) => {
+        return (
+          item.fullName.toLowerCase().includes(this.searchValue.toLowerCase()) ||
+          item.email.toLowerCase().includes(this.searchValue.toLowerCase()) ||
+          item.role.name.toLowerCase().includes(this.searchValue.toLowerCase()))
+      });
     })
   }
 
+  refetchEmployees() {
+    this.store.dispatch(new FetchEmployees());
+  }
 
   onPageIndexChange(pageIndex: number): void {
     this.pageIndex = pageIndex;
@@ -186,6 +206,7 @@ export class EmployeesComponent implements OnInit {
           if (res) {
             this.store.dispatch([new FetchEmployees, new FetchFlatRoles, new FetchAll])
             this.message.success('Successfully Updated employee ' + res.fullName)
+            this.handleEmployeeEditCancel();
           }
         }
       )

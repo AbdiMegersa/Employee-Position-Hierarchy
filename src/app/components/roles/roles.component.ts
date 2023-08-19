@@ -9,14 +9,14 @@ import { RoleTreeNode, RoleDetail } from '../../models/Role'
 import { RoleService } from '../../services/role.service'
 import { catchError } from 'rxjs/operators'
 import { FetchAll, FetchEmployees, FetchFlatRoles } from '../../state/role.actions'
-import { RoleCreate, FlatRole } from '../../models/Role'
+import { RoleCreate, FlatRole, RoleUrl } from '../../models/Role'
 import { Employee } from '../../models/Role'
 import { phoneValidator } from './phone-validator'
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 
 interface ModalDetail {
-  selected: RoleDetail | null;
+  selected: RoleDetail | RoleUrl | null;
   loading: boolean;
   visible: boolean;
   data: any;
@@ -24,6 +24,7 @@ interface ModalDetail {
   children?: Array<RoleTreeNode> | null;
   potentialParents?: Array<any>;
   isHead?: boolean;
+  processing?: boolean;
 }
 
 @Component({
@@ -41,6 +42,7 @@ export class RolesComponent implements OnInit {
   deleteForm!: FormGroup;
   mockData = data;
   flatRoles!: Array<FlatRole>;
+  scaleClass: number = 0.8;
 
   @Select(RoleState.getRoles) roles$!: Observable<any[]>;
   @Select(RoleState.getEmployees) employees$!: Observable<any[]>;
@@ -49,10 +51,11 @@ export class RolesComponent implements OnInit {
   isRoleFormVisible: boolean = false;
   isEmployeeFormVisible: boolean = false;
   selectedNodes: TreeNode[] = [];
-
+  rolesError: string = "";
 
   isRoleEditLoading: boolean = false
   isAddEmployeeLoading: boolean = false;
+  isEditLoading: boolean = false;
 
 
   addRoleDetail: ModalDetail = {
@@ -87,7 +90,8 @@ export class RolesComponent implements OnInit {
     selected: null,
     loading: false,
     visible: false,
-    data: null
+    data: null,
+    isHead: false
   }
 
   // the data for the organization chart!
@@ -129,13 +133,30 @@ export class RolesComponent implements OnInit {
       console.log('HERE IT IS: ', data.roles)
       this.chartDetail.loading = data.loading;
       this.flatRoles = data.flatRoles;
+      this.rolesError = data.rolesError;
       if (!this.chartDetail.loading && !this.chartDetail.error) {
         this.chartDetail.data = null
         this.chartDetail.data = data.roles
       } else if (data.error) {
-        this.chartDetail.error = data.error
+        this.chartDetail.error = data.rolesError
       }
     })
+  }
+
+  scaleUp() {
+    this.scaleClass = Math.round((this.scaleClass+0.05)*100)/100
+    // this.message.info(`${this.scaleClass}`)
+  }
+  scaleDown(){
+    if(this.scaleClass > 0.48){
+    this.scaleClass = Math.round((this.scaleClass-0.05)*100)/100
+    // this.scaleClass -=  0.05
+      // this.message.info(`${this.scaleClass}`)
+    }
+  }
+
+  refetchRoles(){
+    this.store.dispatch(new FetchAll())
   }
 
   showRoleAddModal() {
@@ -285,47 +306,36 @@ export class RolesComponent implements OnInit {
 
   showRoleEdit(node: RoleTreeNode) {
 
-    this.editDetail.visible = true
     this.editDetail.loading = true
-
-    const role = this.flatRoles.find(rol => rol.id === node.data.id)
-    if(role){
-      this.message.info('Role found '+role.name)
-      this.message.info('paren found '+role.reportsTo?.name)
-      this.editDetail.flatData = role
-      this.roleForm = this.formBuilder.group({
-        name: [role.name, Validators.required],
-        description: [role.description, Validators.required],
-        parentId: [role.reportsTo?.id ?? null]
-      })
+    // this.editDetail.selected = node.data;
+    this.editDetail.visible = true
+    this.editDetail.data = node.data
+    
+    // const role = this.flatRoles.find(rol => rol.id === node.data.id)
+    // if(role){
+    //   // this.message.info('Role found '+role.name)
+      // this.message.info('paren found '+role.reportsTo?.name)
+      // this.editDetail.flatData = role
+      // this.roleForm = this.formBuilder.group({
+      //   name: [role.name, Validators.required],
+      //   description: [role.description, Validators.required],
+      //   parentId: [role.reportsTo?.id ?? null]
+      // })
 
       this.roleService.fetchRolesExceptDescendant(node.data.id).subscribe(ppRoles => {
-        this.message.info('Feching potential parents')
-        this.editDetail.data = ppRoles
-        this.message.info('Finished fetching potential parents')
+        // this.message.info('Feching potential parents')
+        console.log('started Fetchinf potential parents')
+        // ppRoles = ppRoles.filter(role => role.id !== node.data.id)
+        this.editDetail.potentialParents = ppRoles.filter(role => role.id !== node.data.id)
+        console.info('Finished fetching potential parents', ppRoles)
       })
       this.editDetail.loading = false;
 
-    }else{
-      this.message.error('Could not found role ' + node.data.name);
-      // this.editDetail.loading = false
-    }
+    // }else{
+    //   this.message.error('Could not found role ' + node.data.name);
+    //   // this.editDetail.loading = false
+    // }
 
-
-    // this.roleService.fetchSingleRole(node.data.id).subscribe(res => {
-    //   this.editDetail.selected = res
-
-    //   this.roleForm = this.formBuilder.group({
-    //     name: [res.name, Validators.required],
-    //     description: [res.description, Validators.required],
-    //     parentId: [res.reportsTo ? res.reportsTo : null]
-    //   })
-
-    //   this.roleService.fetchRolesExceptDescendant(node.data.id).subscribe(ppRoles => {
-    //     this.editDetail.data = ppRoles
-    //   })
-
-    // })
 
   }
   handleRoleEditCancel() {
@@ -337,32 +347,43 @@ export class RolesComponent implements OnInit {
       data: null
     }
     // this.roleForm.reset()
+    this.editDetail.processing = false;
     this.isRoleEditLoading = false;
 
   }
-  handleRoleEditOk() {
-    if (this.roleForm.valid) {
-      this.isRoleEditLoading = true;
-      if (this.editDetail.selected) {
-        let id = this.editDetail.selected.id;
-        this.roleService.updateRole(id, this.roleForm.value).subscribe(
-          res => {
-            this.store.dispatch([new FetchAll(), new FetchEmployees(), new FetchFlatRoles()]);
-            console.log(res.id + ' updated');
-            this.isRoleEditLoading = false;
-            this.handleRoleEditCancel();
-          },
-          error => {
-            console.log('Error updating role: ' + error.message);
-            this.isRoleEditLoading = false;
+  handleRoleEditOk(updateForm: any) {
+    // this.message.info('Started Editing a role')
+    console.log(updateForm.value)
+    if (updateForm.valid) {
+      // this.message.info('Form Valid')
+      this.editDetail.processing = true;
+      // this.editDetail.loading = true;
+      if (this.editDetail.data) {
+        let id = this.editDetail.data.id;
+        this.roleService.updateRole(id, updateForm.value).pipe(
+          catchError((Err) => {
+            this.message.error(Err.error.message)
+            return of(null)
+          })
+        ).subscribe(
+          res=>{
+            if(res){
+              this.store.dispatch([new FetchAll(), new FetchEmployees(), new FetchFlatRoles()]);
+              this.message.success('Successfully updated role '+res.name)
+              this.handleRoleEditCancel();
+            }else{
+              this.message.error("Role Could not be updated")
+            }
           }
-        );
+        )
+
       } else {
         console.log('Some problem in update');
         this.isRoleEditLoading = false;
       }
     } else {
-      console.log('Form invalid');
+      this.message.warning('Invalid Form')
+      // console.log('Form invalid');
     }
   }
 
@@ -397,6 +418,7 @@ export class RolesComponent implements OnInit {
   handleRoleDeleteOk() {
     this.deleteDetail.loading = true;
     // fech except descendants if role has a children
+    console.log('started deleting role ')
     this.roleService.fetchSingleRole(this.deleteDetail.data.id).subscribe(res => {
       
       if (res.reportsTo) {
@@ -405,14 +427,13 @@ export class RolesComponent implements OnInit {
         if (this.deleteForm.value.parentId) {
           newParent = this.deleteForm.value.parentId
         }else {
-          newParent = res.id
+          newParent = res.reportsTo.id
         }
-
           console.log('delete role ' + this.deleteDetail.data.id)
           console.log('delete role parentId ' + newParent)
-        this.roleService.deleteRole(newParent, res.reportsTo.id).subscribe(ok => {
-          // add message here
+          console.log(newParent, res.reportsTo.id)
 
+        this.roleService.deleteRole(this.deleteDetail.data.id , newParent).subscribe(ok => {
           console.log(res.name + 'deleted')
           this.store.dispatch([new FetchAll(), new FetchEmployees(), new FetchFlatRoles()])
           this.message.success('Successfully deleted role ' + res.name, { nzDuration: 3000 });
@@ -441,14 +462,8 @@ export class RolesComponent implements OnInit {
       loading: true,
       children: node.children.length > 0 ? node.children : null
     }
-    // let hasAParent: boolean = false;
 
-    this.roleService.fetchSingleRole(node.data.id).subscribe((res) => {
-      if (res) {
-        console.log(res)
-        this.viewDetail.selected = res;
-      }
-    });
+    this.viewDetail.data = node.data;
     this.viewDetail.loading = false;
 
   }

@@ -1,0 +1,21 @@
+<nz-modal [(nzVisible)]="viewDetail.visible" [nzTitle]="'Role Information'" (nzOnCancel)="cancelView()">
+    <div *nzModalContent class="flex flex-col">
+        <ng-template #loading>
+            <div class="flex justify-center items-center">
+                <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
+            </div>
+        </ng-template>
+        <ng-container>
+            <p nz-typography nzCopyable [nzCopyText]="viewDetail.data.name">
+                {{viewDetail.visible}}
+                <span class="p-1">Role Name:</span> <span class="font-bold inline-block p-1"> {{
+                    viewDetail.data.name }} </span>
+            </p>
+            <p nz-typography nzCopyable [nzCopyText]="viewDetail.data.description" class="flex">
+                <span class="p-1">Description:</span> <span class="inline-block p-1 italic">{{" "}} {{
+                    viewDetail.data.description }} </span>
+            </p>
+            <a [routerLink]="'/roles/'+viewDetail.data.id" class="p-2 rounded bg-blue-200">More...</a>
+        </ng-container>
+    </div>
+</nz-modal>

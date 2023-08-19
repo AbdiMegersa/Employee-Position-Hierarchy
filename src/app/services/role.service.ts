@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http'
-import { Observable } from 'rxjs';
+import { Observable, shareReplay } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   RoleUrl,
@@ -69,14 +69,31 @@ export class RoleService {
     );
   }
 
+  // fetchFlatRoles(): Observable<FlatRole[]> {
+  //   const url = "http://127.0.0.1:3000/roles?flat=true&depth=10";
+  //   return this.http.get<FlatRole[]>(url);
+  // }
+  // fetchSingleRole(id: string): Observable<RoleDetail> {
+  //   const url = `http://127.0.0.1:3000/roles/${id}`;
+  //   return this.http.get<RoleDetail>(url)
+  // }
+
   fetchFlatRoles(): Observable<FlatRole[]> {
     const url = "http://127.0.0.1:3000/roles?flat=true&depth=10";
-    return this.http.get<FlatRole[]>(url);
+    const options = { headers: { 'Accept-Encoding': 'gzip' } }; // Enable gzip compression
+  
+    return this.http.get<FlatRole[]>(url, options).pipe(
+      shareReplay() // Enable response caching
+    );
   }
-  fetchSingleRole(id: string): Observable<RoleDetail> {
+  
+  fetchSingleRole(id: string): Observable<RoleUrl> {
     const url = `http://127.0.0.1:3000/roles/${id}`;
-    return this.http.get<RoleDetail>(url)
+    // const options = { headers: { 'Accept-Encoding': 'gzip' } }; // Enable gzip compression
+  
+    return this.http.get<RoleUrl>(url);
   }
+  
 
   fetchRolesExceptDescendant(id: string): Observable<Array<RolePotentialParent>> {
     const url = `http://127.0.0.1:3000/roles/${id}/except_descendants`
@@ -85,7 +102,11 @@ export class RoleService {
 
   fetchEmployees(): Observable<EmployeeApi> {
     const url = "http://127.0.0.1:3000/employees?page=1&limit=50";
-    return this.http.get<EmployeeApi>(url);
+    const options = { headers: { 'Accept-Encoding': 'gzip' } }; // Enable gzip compression
+    // const opti = { headers: { 'Accept-Encoding': 'gzip' }}
+    return this.http.get<EmployeeApi>(url, options).pipe(
+      shareReplay()
+    );
   }
 
   createRole(role: {name: string; description: string; parentId?: string}): Observable<RoleCreate> {
@@ -103,7 +124,7 @@ export class RoleService {
     return this.http.post<RoleCreate>(url, body, { headers })
   }
 
-  updateRole(roleId: string, updatedRole: { name: string; description: string; parentId: string }): Observable<RolePotentialParent> {
+  updateRole(roleId: string, updatedRole: { name: string; description: string; parentId: string | null }): Observable<RolePotentialParent> {
     const url = `http://127.0.0.1:3000/roles/${roleId}`
     const headers = new HttpHeaders({
       'Accept': 'application/json',

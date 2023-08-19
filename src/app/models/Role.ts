@@ -4,15 +4,20 @@ export interface RoleUrl {
   description: string;
   children: Array<RoleUrl>;
   employees: Array<EmployeeUrl>;
+  reportsTo: {
+    id: string;
+    name: string;
+    description: string;
+  }
 }
 
 export interface FlatRole {
   id: string;
   name: string;
   description: string;
-  parentId: string
+  // parentId: string
   employees: Array<EmployeeUrl>;
-  reportsTo?: {
+  reportsTo: {
     id: string;
     name: string;
     description: string;
@@ -43,7 +48,7 @@ export interface RoleTreeNode {
   styleClass: string;
   type: string;
   data: RoleTreeNodeData;
-  children: any[]
+  children: RoleTreeNode[]
 }
 
 

@@ -1,1 +1,45 @@
-<p>edit-modal works!</p>
+<nz-modal [(nzVisible)]="editDetail.visible" [nzTitle]="'Edit Role'" (nzOnCancel)="cancelEdit()">
+    <div *nzModalContent>
+        <ng-template #loading>
+            <div class="flex justify-center items-center">
+                <nz-spin nzSimple [nzSize]="'small'"></nz-spin>
+            </div>
+        </ng-template>
+        <ng-container *ngIf="!editDetail.loading && editDetail.data; else loading">
+            <form [formGroup]="roleForm" nz-form>
+                <nz-form-item>
+                    <nz-form-label nzFor="name" class="font-bold">Role Name</nz-form-label>
+                    <nz-form-control nzHasFeedback nzErrorTip="Role name is required">
+                        <input nz-input formControlName="name" id="name" />
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label nzFor="description" class="font-bold">Role Description</nz-form-label>
+                    <nz-form-control nzHasFeedback nzErrorTip="Role description is required">
+                        <textarea nz-input formControlName="description" id="description"></textarea>
+                    </nz-form-control>
+                </nz-form-item>
+                <ng-template #noParent>
+                    Manager/Supervisor: Loadign...
+                </ng-template>
+                <nz-form-item *ngIf="editDetail.data; else noParent">
+                    <nz-form-label nzFor="parentId" class="font-bold">Manager/Supervisor</nz-form-label>
+                    <nz-form-control nzErrorTip="Manager is required">
+                        <nz-select formControlName="parentId" id="parentId" [(ngModel)]="roleForm.value.parentId">
+                            <nz-option *ngFor="let manager of editDetail.potentialParents" [nzLabel]="manager.name"
+                                [nzValue]="manager.id"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+                <!-- {{roleForm.value | json}} -->
+            </form>
+        </ng-container>
+    </div>
+    <div *nzModalFooter>
+        <button nz-button nzType="default" class="rounded" (click)="cancelEdit()">Cancel</button>
+        <button nz-button nzType="primary" class="rounded" (click)="okEdit()"
+            [nzLoading]="editDetail.processing">
+            Save Role
+        </button>
+    </div>
+</nz-modal>

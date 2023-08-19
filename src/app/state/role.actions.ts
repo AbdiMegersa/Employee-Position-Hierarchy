@@ -17,6 +17,7 @@ export class FetchRolesSuccess {
     constructor(public payload: RoleTreeNode[]) { }
 }
 
+
 export class FetchFlatRolesSuccess {
     static readonly type = '[Role] Fetch Flat Roles Success';
     constructor(public payload: FlatRole[]) { }
@@ -25,6 +26,21 @@ export class FetchFlatRolesSuccess {
 export class FetchEmployeesSuccess {
     static readonly type = "[Role State] Fetch Employees Success";
     constructor(public payload: Array<EmployeeBulk>) { }
+}
+
+export class FetchRolesFail {
+    static readonly type = "[Role State] Fetch Roles Failure"
+    constructor(public payload: string){}
+}
+
+export class FetchEmployeesFail {
+    static readonly type = "[Role State] Fetch Employees Failure"
+    constructor(public payload: string){}
+}
+
+export class FetchFlatRolesFail {
+    static readonly type = "[Role State] Fetch Flat Roles Failure"
+    constructor(public payload: string){}
 }
 
 export class CreateRole {

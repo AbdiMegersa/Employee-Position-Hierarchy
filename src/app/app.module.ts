@@ -24,7 +24,9 @@ import { EditModalComponent } from './components/roles/components/edit-modal/edi
 
 import { NgxsModule } from '@ngxs/store';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
-import { RoleState } from './state/role.state'
+import { RoleState } from './state/role.state';
+import { NotFoundComponent } from './components/not-found/not-found.component'
+import { RoleDetailComponent } from './components/roles/components/role-detail/role-detail.component';
 // import { NgxMaskModule } from 'ngx-mask';
 
 registerLocaleData(en);
@@ -37,7 +39,9 @@ registerLocaleData(en);
     EmployeesComponent,
     ViewModalComponent,
     DeleteModalComponent,
-    EditModalComponent
+    EditModalComponent,
+    RoleDetailComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,

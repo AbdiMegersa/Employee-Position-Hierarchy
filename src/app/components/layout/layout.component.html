@@ -1,15 +1,27 @@
-<div class="flex justify-center">
+<div class="flex justify-center max-w-7xl mx-auto">
     <nz-layout class="h-full bg-white border-x ">
-        <nz-header class="flex justify-between items-center bg-blue-500 p-0">
-            <div class="logo">
-                <a routerLink="">
-                    <h1 class="text-2xl text-white px-5">Work Force</h1>
+        <nz-header class="flex justify-between items-center bg-blue-200 p-0">
+            <div class="logo sm:w-1/2">
+                <a routerLink="/" class="text-blue-600">
+                    <h1 class="text-2xl text-blue-500-5 mx-2">Work Force</h1>
                 </a>
             </div>
-            <div class="bg-blue-500 text-white flex items-center h-full p-0 pt-2">
-                    <a routerLink="roles" routerLinkActive="bg-white text-blue-500" class="mx-3 p-2 rounded-t-lg h-full flex items-center hover:underline text-md ">Roles</a>
-                    <a routerLink="employees" routerLinkActive="bg-white text-blue-500" class="mx-3 p-2 rounded-t-lg h-full flex items-center hover:underline text-md">Employee list</a>
+
+            <div class="bg-blue-200 w-1/4 md:w-1/3 sm:w-1/2 text-blue-500 flex items-center h-full p-0 pt-2 text-center">
+                <div class="p-3">
+                    <a routerLink="roles" routerLinkActive="text-bold text-gray-800"
+                        class="text-center mx-3 p-2 rounded-t-lg h-full flex items-center justify-center hover:underline text-md text-gray-700 ">
+                        <span class="text-center block tracking-widest">Roles</span>
+                    </a>
+                </div>
+                <div class="p-3">
+                    <a routerLink="employees" routerLinkActive="text-bold text-gray-800"
+                        class="text-center mx-3 p-2 rounded-t-lg h-full flex items-center justify-center hover:underline text-md text-gray-700 ">
+                        <span class="text-center block tracking-widest">Employee list</span>
+                    </a>
+                </div>
             </div>
+
         </nz-header>
         <nz-content class="min-h-full">
             <div class="bg-white flex">

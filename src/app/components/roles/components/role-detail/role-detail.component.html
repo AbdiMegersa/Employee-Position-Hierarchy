@@ -1,0 +1,133 @@
+<div class="flex flex-col border">
+    <div class="my-5 bg-gray-200 text-center block w-full py-4 flex justify-center">
+        <h5 *ngIf="!loading" class="text-xl">{{ role.name }}</h5>
+        <div *ngIf="loading" class="my-2 bg-blue-200 border border-blue-200 h-4 w-16 rounded animate-pulse"></div>
+    </div>
+    <div class="flex my-4 w-full border justify-center">
+        <div class="border m-4 max-w-lg bg-gray-200 p-4 rounded">
+            <ng-container *ngIf="loading" class="w-full text-gray-200">
+                {{"____________________________________"}}
+                <nz-skeleton [nzActive]="true"></nz-skeleton>
+            </ng-container>
+            <ng-container *ngIf="!loading">
+                <p nz-typography class="flex">
+                    <span class="inline-block p-1 italic"> {{ role.description }}</span>
+                </p>
+                <p nz-typography>
+                    <span class="p-1">Status</span>
+                    <span class="font-bold inline-block p-1 italic"> {{ role.employees.length >0 ? "Active" :
+                        "Vacant"}}</span>
+                </p>
+            </ng-container>
+
+        </div>
+
+        <div class="border m-4 bg-gray-200 rounded p-4">
+            <ng-container *ngIf="loading" class="w-full text-gray-400">
+                <div class="max-w-xl mx-auto">
+                    <div class="">
+                        <div class="flex flex-col">
+                            <div class="my-2 bg-blue-200 border border-blue-200 h-4 w-16 rounded animate-pulse"></div>
+                            <div class="my-2 bg-blue-200 border border-blue-200 h-16 w-16 rounded animate-pulse"></div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="!loading">
+                <h3 [style.text-decoration]="'capitalize'">Reports To</h3>
+                <div class="flex items-center mt-3">
+                    <ng-template #noParent>
+                        <div class="flex items-center">
+                            <h5 class="text-center rounded p-2 bg-blue-200">No Supervisor</h5>
+                        </div>
+                    </ng-template>
+                    <div *ngIf="role.reportsTo; else noParent"
+                        class="border flex flex-col p-2 m-2 text-center p-2 bg-blue-200 text-gray-800 rounded-lg shadow-lg hover:bg-blue-300">
+                        <a [routerLink]="'/roles/'+role.reportsTo.id">
+                            <div>
+                                <span nz-icon nzType="user" class="p-3 border rounded-full"></span>
+                            </div>
+                            <p class="my-1">
+                                {{ role.reportsTo.name }}
+                            </p>
+                        </a>
+                    </div>
+                </div>
+            </ng-container>
+
+        </div>
+        <!-- </div> -->
+        <div class="border m-4 bg-gray-200 rounded p-4">
+            <ng-container *ngIf="loading">
+                <div class="max-w-xl mx-auto">
+                    <div class="">
+                        <div class="flex flex-col">
+                            <div class="my-2 bg-blue-200 border border-blue-200 h-4 w-16 rounded animate-pulse"></div>
+                            <div class="flex">
+                                <div class="mx-2 bg-blue-200 border border-blue-200 h-16 w-16 rounded animate-pulse">
+                                </div>
+                                <div class="mx-2 bg-blue-200 border border-blue-200 h-16 w-16 rounded animate-pulse">
+                                </div>
+                                <div class="mx-2 bg-blue-200 border border-blue-200 h-16 w-16 rounded animate-pulse">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="!loading">
+                <h3 [style.text-decoration]="'capitalize'">Subordinates Roles</h3>
+                <ng-template #noChildren>
+                    <h4 class="text-center p-2 rounded bg-blue-200">No Subordinate Roles</h4>
+                </ng-template>
+                <div class="flex" *ngIf="role.children && role.children.length>0; else noChildren">
+                    <a *ngFor="let child of role.children" [routerLink]="'/roles/'+child.id">
+                        <div
+                            class="border flex flex-col p-2 m-2 text-center p-2 bg-blue-200 text-gray-800 rounded-lg shadow-lg hover:bg-blue-300">
+                            <div>
+                                <span nz-icon nzType="user" class="p-3 border rounded-full"></span>
+                            </div>
+                            <p class="my-1">{{child.name}}</p>
+                        </div>
+                    </a>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+    <ng-template #loadingSkeleton>
+        <div>
+            <nz-skeleton [nzActive]="true"></nz-skeleton>
+        </div>
+    </ng-template>
+    <div class="my-4 border" *ngIf="!loading; else loadingSkeleton">
+        <h3 [style.text-decoration]="'capitalize'" class="p-3 m-2 text-center">Employees Assigned</h3>
+        <ng-template #noEmployees>
+            <div class="mx-auto border my-3 p-2 text-center text-red-600">No Employees Assigned</div>
+        </ng-template>
+        <nz-table *ngIf="employees.length>0; else noEmployees" #table [nzData]="employees" [nzPageSize]="pageSize"
+            [nzPageIndex]="pageIndex" (nzPageIndexChange)="onPageIndexChange($event)">
+            <thead>
+                <tr>
+                    <th nzCheckbox></th>
+                    <th>#</th>
+                    <th> name </th>
+                    <th> email </th>
+                    <th> gender </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of table.data; let i = index">
+                    <td nzCheckbox></td>
+                    <td>{{ i + 1 + (pageIndex - 1) * pageSize }}</td>
+                    <td>{{ data.fullName }}</td>
+                    <td>{{ data.email }}</td>
+                    <td>{{ data.gender }}</td>
+
+                </tr>
+
+            </tbody>
+        </nz-table>
+
+
+    </div>
+</div>

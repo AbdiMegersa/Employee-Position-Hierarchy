@@ -1,8 +1,24 @@
 <ng-template #loading>
-    Loadin...
+    <div class="flex justify-center items-center">
+        <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
+    </div>
 </ng-template>
-<nz-table *ngIf="!loadingEmployees && listOfData; else loading" #table [nzData]="listOfData" [nzPageSize]="pageSize" [nzPageIndex]="pageIndex"
-    (nzPageIndexChange)="onPageIndexChange($event)">
+<div *ngIf="employeesError">
+    {{ employeesError }}
+    <button nz-button nzType="primary" (click)="refetchEmployees()">
+        Reload
+    </button>
+</div>
+<nz-input-group [nzSuffix]="suffixIcon" class="my-2 p-1">
+    <input nz-input [(ngModel)]="searchValue" (ngModelChange)="filterList()"
+        placeholder="Search by name, role or email...">
+</nz-input-group>
+<ng-template #suffixIcon>
+    <i nz-icon nzType="search"></i>
+</ng-template>
+
+<nz-table *ngIf="!loadingEmployees && listOfData; else loading" #table [nzData]="listOfData" [nzPageSize]="pageSize"
+    [nzPageIndex]="pageIndex" (nzPageIndexChange)="onPageIndexChange($event)" class="">
     <thead>
         <tr>
             <th nzCheckbox></th>
@@ -19,13 +35,17 @@
         <tr *ngFor="let data of table.data; let i = index">
             <td nzCheckbox></td>
             <td>{{ i + 1 + (pageIndex - 1) * pageSize }}</td>
-            <td>{{ data.id }}</td>
+            <!-- <td>{{ data.id }}</td> -->
             <td>{{ data.fullName }}</td>
             <td>{{ data.email }}</td>
             <td>{{ data.role.name }}</td>
             <td>
-                <button (click)="showEmployeeEditModal(data)" nz-button nzType="link">view/edit</button>
-                <button (click)="showDeleteModal(data)" nz-button nzType="link" nzDanger>delete</button>
+                <button (click)="showEmployeeEditModal(data)" nz-button nzType="link">
+                    <span nz-icon nzType="edit">Edit </span>
+                </button>
+                <button (click)="showDeleteModal(data)" nz-button nzType="link" nzDanger>
+                    <span nz-icon nzType="delete">Delete </span>
+                </button>
             </td>
         </tr>
     </tbody>
@@ -72,9 +92,8 @@
             <nz-form-item>
                 <nz-form-label nzFor="roleId" class="font-bold">Role</nz-form-label>
                 <nz-form-control nzErrorTip="Role is required">
-                    <nz-select formControlName="roleId" id="roleId" [(ngModel)]="employeeEditForm.value.roleId" >
-                        <nz-option *ngFor="let role of flatRoles" [nzLabel]="role.name"
-                            [nzValue]="role.id"></nz-option>
+                    <nz-select formControlName="roleId" id="roleId" [(ngModel)]="employeeEditForm.value.roleId">
+                        <nz-option *ngFor="let role of flatRoles" [nzLabel]="role.name" [nzValue]="role.id"></nz-option>
                     </nz-select>
                 </nz-form-control>
             </nz-form-item>
@@ -89,7 +108,8 @@
     </div>
 </nz-modal>
 
-<nz-modal *ngIf="selectedDeleteNode" [(nzVisible)]="isDeleteModalVisible" nzTitle="Delete Employee" (nzOnCancel)="handleDeleteCancel()">
+<nz-modal *ngIf="selectedDeleteNode" [(nzVisible)]="isDeleteModalVisible" nzTitle="Delete Employee"
+    (nzOnCancel)="handleDeleteCancel()">
     <div *nzModalContent>
         Are you sure you want to delete employee: <span class="font-bold">{{ selectedDeleteNode.fullName }} ? </span>
     </div>

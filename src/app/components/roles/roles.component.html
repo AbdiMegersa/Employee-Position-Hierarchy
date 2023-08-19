@@ -1,17 +1,30 @@
 <div class="flex flex-col min-h-screen justify-between">
-    <div class="my-5 flex justify-center">
-        <button (click)="showRoleAddModal()" nz-button nzType="primary"
-            class="mx-2 rounded font-bold flex justify-center shadow basis-1/12">
-            <span nz-icon nzType="file-add" nzTheme="outline"></span>
-            Add Role
-        </button>
+    <div class="my-5 flex justify-evenly items-center">
+        <div class="flex">
+            <button (click)="showRoleAddModal()" nz-button nzType="primary"
+                class="mx-2 rounded font-bold flex justify-center shadow basis-1/12">
+                <span nz-icon nzType="file-add" nzTheme="outline"></span>
+                Add Role
+            </button>
 
-        <button (click)="showEmployeeModal()" nz-button nzType="primary"
-            class="mx-2 rounded font-bold flex justify-center shadow">
-            <span nz-icon nzType="user-add" class="mx-1" nzTheme="outline"></span>
-            Add Employee
-        </button>
+            <button (click)="showEmployeeModal()" nz-button nzType="primary"
+                class="mx-2 rounded font-bold flex justify-center shadow">
+                <span nz-icon nzType="user-add" class="mx-1" nzTheme="outline"></span>
+                Add Employee
+            </button>
 
+            <button nz-button nzType="primary" class="float-right" (click)="refetchRoles()">Refresh</button>
+        </div>
+        <div class="top-30 right-10 m-1 bg-gray-300 p-2 rounded z-10">
+            <button nz-button nzType="primary" class="mx-1 rounded-full" (click)="scaleUp()"><span nz-icon
+                    nzType="zoom-in" nzTheme="outline"></span></button>
+            <button nz-button nzType="primary" class="mx-1 rounded-full" (click)="scaleDown()"><span nz-icon
+                    nzType="zoom-out" nzTheme="outline"></span>
+                </button>
+            <button nz-button nzType="primary" class="mx-1 rounded-full" (click)="refetchRoles()">
+                <span >refresh</span>
+            </button>
+        </div>
 
         <!-- For employee form / modal -->
         <nz-modal [(nzVisible)]="addEmployeeDetail.visible" nzTitle="Add New Employee"
@@ -81,18 +94,22 @@
         </nz-modal>
 
     </div>
+    <!-- The Org Chart -->
     <div
         class="border border-4 border-blue-500 rounded card flex justify-center overflow-x-auto min-w-screen basis-1/2">
-        <div class="max-w-3xl m-10">
+
+        <div class="max-w-3xl m-10 flex items-center">
+
             <div *ngIf="chartDetail.error">
-                Error...
+                {{chartDetail.error}}
+                <button nz-button nzType="primary" (click)="refetchRoles()">Refresh</button>
             </div>
-            <div class="flex justify-center items-center">
+            <div class="flex items-center justify-center">
                 <div *ngIf="chartDetail.loading" style="position: absolute; z-index: 1;">
                     <nz-spin [nzSize]="'large'">Fetching Data</nz-spin>
                 </div>
-                <div style="position: relative;">
-                    <div class="blur" *ngIf="chartDetail.loading">
+                <div style="position: relative;" class="flex justify-center">
+                    <div class="blur flex justify-center items-center" *ngIf="chartDetail.loading">
                         <p-organizationChart [value]="mockData">
                             <ng-template let-node pTemplate="person">
                                 <div class="text-center flex flex-col justify-center items-center">
@@ -107,7 +124,8 @@
                     </div>
                 </div>
             </div>
-            <p-organizationChart [value]="chartDetail.data" *ngIf="!chartDetail.loading && chartDetail.data">
+            <p-organizationChart [style.transform]="'scale(' + scaleClass + ')'" [value]="chartDetail.data"
+                *ngIf="!chartDetail.loading && chartDetail.data">
                 <ng-template let-node pTemplate="person">
                     <a nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click"
                         class="text-center flex flex-col justify-center items-center">
@@ -134,9 +152,11 @@
                 </ng-template>
             </p-organizationChart>
         </div>
+
     </div>
 </div>
 
+<!-- ADD ROLE -->
 <!-- modal for adding new role -->
 <nz-modal [(nzVisible)]="addRoleDetail.visible" nzTitle="Add New Role" (nzOnCancel)="handleRoleCancel()">
     <div *nzModalContent>
@@ -174,65 +194,50 @@
     </div>
 </nz-modal>
 
-
+<!-- VIEW ROLE -->
 <!-- nz modal for viewing a role -->
 <div *ngIf="viewDetail.visible">
-    <nz-modal [(nzVisible)]="viewDetail.visible" [nzTitle]="'Role Information'" (nzOnCancel)="handleRoleViewCancel()">
+    <app-view-modal 
+        [viewDetail]="viewDetail"
+        (onCancelView)="handleRoleViewCancel()"
+    ></app-view-modal>
+    <!-- <nz-modal [(nzVisible)]="viewDetail.visible" [nzTitle]="'Role Information'" (nzOnCancel)="handleRoleViewCancel()">
         <div *nzModalContent class="flex flex-col">
             <ng-template #loading>
-                Loading...
+                <div class="flex justify-center items-center">
+                    <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
+                </div>
             </ng-template>
-            <ng-container *ngIf="!viewDetail.loading && viewDetail.selected; else loading">
-                <p nz-typography nzCopyable [nzCopyText]="viewDetail.selected.id ">
-                    <span class="p-1">Role Id:</span> <span class="font-bold inline-block p-1 italic"> {{
-                        viewDetail.selected.id }} </span>
-                </p>
-                <p nz-typography nzCopyable [nzCopyText]="viewDetail.selected.name">
+            <ng-container>
+                <p nz-typography nzCopyable [nzCopyText]="viewDetail.data.name">
                     <span class="p-1">Role Name:</span> <span class="font-bold inline-block p-1"> {{
-                        viewDetail.selected.name }} </span>
+                        viewDetail.data.name }} </span>
                 </p>
-                <p nz-typography nzCopyable [nzCopyText]="viewDetail.selected.description" class="flex">
+                <p nz-typography nzCopyable [nzCopyText]="viewDetail.data.description" class="flex">
                     <span class="p-1">Description:</span> <span class="inline-block p-1 italic">{{" "}} {{
-                        viewDetail.selected.description }} </span>
+                        viewDetail.data.description }} </span>
                 </p>
-                <p nz-typography>
-                    <span class="p-1">Assigned Employee/s:</span>
-                    <ng-container *ngIf="viewDetail.selected?.employees && viewDetail.selected.employees.length>0; else noEmployees">
-                        <span class="font-bold inline-block mx-1"
-                            *ngFor="let employee of viewDetail.selected?.employees">
-                            {{ employee.fullName }}
-                        </span>
-                    </ng-container>
-                    <ng-template class="text-red-500" #noEmployees>
-                        There Currently no assigned employees
-                    </ng-template>
-                </p>
-                <ng-container *ngIf="viewDetail.selected?.reportsTo">
-                    <p nz-typography nzCopyable [nzCopyText]="viewDetail.selected.reportsTo?.name">
-                        <span class="p-1">Reports To:</span> <span class="font-bold inline-block"> {{
-                            viewDetail.selected.reportsTo?.name }} </span>
-                    </p>
-                </ng-container>
-                <p *ngIf="viewDetail.children && viewDetail.children.length > 0">
-                    <span class="p-1">Subordinate Role/s:</span>
-                    <span nz-typography nzCopyable [nzCopyText]="child.data.name" class="font-bold inline-block mx-1"
-                        *ngFor="let child of viewDetail.children">
-                        {{ child.data.name }} </span>
-                </p>
+                <a [routerLink]="'/roles/'+viewDetail.data.id" class="p-2 rounded bg-blue-200">More...</a>
             </ng-container>
         </div>
-    </nz-modal>
+    </nz-modal> -->
+
 </div>
-
-
 
 <!-- nz modal for editing a role -->
 <!-- cancel and save -->
 <div *ngIf="editDetail.visible">
-    <nz-modal [(nzVisible)]="editDetail.visible" [nzTitle]="'Edit Role'" (nzOnCancel)="handleRoleEditCancel()">
+    <app-edit-modal 
+        [editDetail]="editDetail" 
+        (onSave)="handleRoleEditOk($event)" 
+        (onCancel)="handleRoleEditCancel()"
+    ></app-edit-modal>
+    <!-- <nz-modal [(nzVisible)]="editDetail.visible" [nzTitle]="'Edit Role'" (nzOnCancel)="handleRoleEditCancel()">
         <div *nzModalContent>
             <ng-template #loading>
-                Loading...
+                <div class="flex justify-center items-center">
+                    <nz-spin nzSimple [nzSize]="'small'"></nz-spin>
+                </div>
             </ng-template>
             <ng-container *ngIf="!editDetail.loading && editDetail.data; else loading">
                 <form [formGroup]="roleForm" nz-form>
@@ -255,22 +260,21 @@
                         <nz-form-label nzFor="parentId" class="font-bold">Manager/Supervisor</nz-form-label>
                         <nz-form-control nzErrorTip="Manager is required">
                             <nz-select formControlName="parentId" id="parentId" [(ngModel)]="roleForm.value.parentId">
-                                <nz-option *ngFor="let manager of editDetail.data" [nzLabel]="manager.name"
+                                <nz-option *ngFor="let manager of editDetail.potentialParents" [nzLabel]="manager.name"
                                     [nzValue]="manager.id"></nz-option>
                             </nz-select>
                         </nz-form-control>
                     </nz-form-item>
-                    <!-- {{roleForm.value | json}} -->
                 </form>
             </ng-container>
         </div>
         <div *nzModalFooter>
             <button nz-button nzType="default" class="rounded" (click)="handleRoleEditCancel()">Cancel</button>
             <button nz-button nzType="primary" class="rounded" (click)="handleRoleEditOk()"
-                [nzLoading]="isRoleEditLoading">Save
+                [nzLoading]="isEditLoading">Save
                 Role</button>
         </div>
-    </nz-modal>
+    </nz-modal> -->
 </div>
 
 <!-- nz modal for deleting a role -->
@@ -288,7 +292,9 @@
                         <nz-form-item>
                             <nz-form-label nzFor="parentId">New Supervisor for subordinates</nz-form-label>
                             <ng-template #loading>
-                                Loading....
+                                <div class="flex justify-center items-center">
+                                    <nz-spin nzSimple [nzSize]="'small'"></nz-spin>
+                                </div>
                             </ng-template>
                             <nz-form-control nzErrorTip="Supervisor is required"
                                 *ngIf="deleteDetail.potentialParents; else loading">

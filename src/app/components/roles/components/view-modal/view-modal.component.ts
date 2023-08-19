@@ -1,12 +1,25 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-view-modal',
   templateUrl: './view-modal.component.html',
   styleUrls: ['./view-modal.component.css']
 })
-export class ViewModalComponent {
+export class ViewModalComponent implements OnInit{
 
-  @Input() selectedViewNode!: any; 
+  @Input() viewDetail!: any; 
+  @Output() onCancelView = new EventEmitter();
+
+  constructor(){
+    console.log(this.viewDetail)
+  }
+  
+  ngOnInit(): void {
+      console.log(this.viewDetail)
+  }
+
+  cancelView() {
+    this.onCancelView.emit();
+  }
 
 }
