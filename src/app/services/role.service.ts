@@ -20,12 +20,7 @@ import {
   providedIn: 'root'
 })
 
-
-
 export class RoleService {
-
-  // baseUrl = "http://localhost:3000/api"
-
 
   constructor(private http: HttpClient) { }
 
@@ -80,9 +75,8 @@ export class RoleService {
 
   fetchFlatRoles(): Observable<FlatRole[]> {
     const url = "http://127.0.0.1:3000/roles?flat=true&depth=10";
-    const options = { headers: { 'Accept-Encoding': 'gzip' } }; // Enable gzip compression
   
-    return this.http.get<FlatRole[]>(url, options).pipe(
+    return this.http.get<FlatRole[]>(url).pipe(
       shareReplay() // Enable response caching
     );
   }
@@ -102,9 +96,8 @@ export class RoleService {
 
   fetchEmployees(): Observable<EmployeeApi> {
     const url = "http://127.0.0.1:3000/employees?page=1&limit=50";
-    const options = { headers: { 'Accept-Encoding': 'gzip' } }; // Enable gzip compression
     // const opti = { headers: { 'Accept-Encoding': 'gzip' }}
-    return this.http.get<EmployeeApi>(url, options).pipe(
+    return this.http.get<EmployeeApi>(url).pipe(
       shareReplay()
     );
   }
@@ -125,6 +118,7 @@ export class RoleService {
   }
 
   updateRole(roleId: string, updatedRole: { name: string; description: string; parentId: string | null }): Observable<RolePotentialParent> {
+    console.log(updatedRole)
     const url = `http://127.0.0.1:3000/roles/${roleId}`
     const headers = new HttpHeaders({
       'Accept': 'application/json',

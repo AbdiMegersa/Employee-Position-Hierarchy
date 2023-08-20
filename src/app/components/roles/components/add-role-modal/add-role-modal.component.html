@@ -1,0 +1,36 @@
+<nz-modal [(nzVisible)]="addRoleDetail.visible" nzTitle="Add New Role" (nzOnCancel)="cancelAddRole()">
+    <div *nzModalContent>
+        <form [formGroup]="roleForm" nz-form>
+            <nz-form-item>
+                <nz-form-label nzFor="name" class="font-bold w-32 text-left">Role Name</nz-form-label>
+                <nz-form-control nzHasFeedback nzErrorTip="Role name is required">
+                    <input nz-input formControlName="name" id="role" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzFor="description" class="font-bold w-32 text-left">Role Description</nz-form-label>
+                <nz-form-control nzHasFeedback nzErrorTip="Role description is required">
+                    <textarea nz-input formControlName="description" id="description"></textarea>
+                </nz-form-control>
+            </nz-form-item>
+            <ng-template #empty class="flex">
+                <span class="font-bold">Manager/Supervisor:</span> <nz-spin nzSimple [nzSize]="'small'"></nz-spin>
+            </ng-template>
+            <nz-form-item *ngIf="flatRoles$ | async; else empty">
+                <nz-form-label nzFor="parentId" class="font-bold w-32 text-left">Supervisor</nz-form-label>
+                <nz-form-control nzErrorTip="Manager is required">
+                    <nz-select formControlName="parentId" id="parentId">
+                        <nz-option *ngFor="let role of flatRoles$ | async " [nzLabel]="role.name"
+                            [nzValue]="role.id"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+
+    </div>
+    <div *nzModalFooter>
+        <button nz-button nzType="default" (click)="cancelAddRole()">Cancel</button>
+        <button nz-button nzType="primary" (click)="addRole()" [nzLoading]="addRoleDetail.loading">Register
+            Role</button>
+    </div>
+</nz-modal>

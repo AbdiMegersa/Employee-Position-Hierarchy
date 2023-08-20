@@ -57,31 +57,31 @@
     <div *nzModalContent>
         <form [formGroup]="employeeEditForm" nz-form>
             <nz-form-item>
-                <nz-form-label nzFor="firstName" class="font-bold">First Name</nz-form-label>
+                <nz-form-label nzFor="firstName" class="font-bold w-32 text-left">First Name</nz-form-label>
                 <nz-form-control nzHasFeedback nzErrorTip="first name is required">
                     <input nz-input formControlName="firstName" id="firstName" />
                 </nz-form-control>
             </nz-form-item>
             <nz-form-item>
-                <nz-form-label nzFor="lastName" class="font-bold">Last Name</nz-form-label>
+                <nz-form-label nzFor="lastName" class="font-bold w-32 text-left">Last Name</nz-form-label>
                 <nz-form-control nzHasFeedback nzErrorTip="Last name is required">
                     <input nz-input formControlName="lastName" id="lastName">
                 </nz-form-control>
             </nz-form-item>
             <nz-form-item>
-                <nz-form-label nzFor="email" class="font-bold">Email</nz-form-label>
+                <nz-form-label nzFor="email" class="font-bold w-32 text-left">Email</nz-form-label>
                 <nz-form-control nzHasFeedback nzErrorTip="Invalid Email">
                     <input nz-input formControlName="email" id="email">
                 </nz-form-control>
             </nz-form-item>
             <nz-form-item>
-                <nz-form-label nzFor="phone" class="font-bold">phone</nz-form-label>
+                <nz-form-label nzFor="phone" class="font-bold w-32 text-left">phone</nz-form-label>
                 <nz-form-control nzHasFeedback nzErrorTip="Invalid Phone Number">
                     <input nz-input formControlName="phone" id="phone">
                 </nz-form-control>
             </nz-form-item>
             <nz-form-item>
-                <nz-form-label nzFor="gender" class="font-bold">Gender</nz-form-label>
+                <nz-form-label nzFor="gender" class="font-bold w-32 text-left">Gender</nz-form-label>
                 <nz-form-control nzErrorTip="Gender is required">
                     <nz-select formControlName="gender" id="gender" [(ngModel)]="employeeEditForm.value.gender">
                         <nz-option [nzLabel]="'Male'" [nzValue]="'M'"></nz-option>
@@ -90,7 +90,7 @@
                 </nz-form-control>
             </nz-form-item>
             <nz-form-item>
-                <nz-form-label nzFor="roleId" class="font-bold">Role</nz-form-label>
+                <nz-form-label nzFor="roleId" class="font-bold w-32 text-left">Role</nz-form-label>
                 <nz-form-control nzErrorTip="Role is required">
                     <nz-select formControlName="roleId" id="roleId" [(ngModel)]="employeeEditForm.value.roleId">
                         <nz-option *ngFor="let role of flatRoles" [nzLabel]="role.name" [nzValue]="role.id"></nz-option>

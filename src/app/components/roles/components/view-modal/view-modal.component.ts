@@ -3,7 +3,6 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 @Component({
   selector: 'app-view-modal',
   templateUrl: './view-modal.component.html',
-  styleUrls: ['./view-modal.component.css']
 })
 export class ViewModalComponent implements OnInit{
 

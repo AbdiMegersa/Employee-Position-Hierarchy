@@ -8,13 +8,13 @@
         <ng-container *ngIf="!editDetail.loading && editDetail.data; else loading">
             <form [formGroup]="roleForm" nz-form>
                 <nz-form-item>
-                    <nz-form-label nzFor="name" class="font-bold">Role Name</nz-form-label>
+                    <nz-form-label nzFor="name" class="font-bold w-32 text-left">Role Name</nz-form-label>
                     <nz-form-control nzHasFeedback nzErrorTip="Role name is required">
                         <input nz-input formControlName="name" id="name" />
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item>
-                    <nz-form-label nzFor="description" class="font-bold">Role Description</nz-form-label>
+                    <nz-form-label nzFor="description" class="font-bold w-32 text-left">Role Description</nz-form-label>
                     <nz-form-control nzHasFeedback nzErrorTip="Role description is required">
                         <textarea nz-input formControlName="description" id="description"></textarea>
                     </nz-form-control>
@@ -23,7 +23,7 @@
                     Manager/Supervisor: Loadign...
                 </ng-template>
                 <nz-form-item *ngIf="editDetail.data; else noParent">
-                    <nz-form-label nzFor="parentId" class="font-bold">Manager/Supervisor</nz-form-label>
+                    <nz-form-label nzFor="parentId" class="font-bold w-32 text-left">Supervisor</nz-form-label>
                     <nz-form-control nzErrorTip="Manager is required">
                         <nz-select formControlName="parentId" id="parentId" [(ngModel)]="roleForm.value.parentId">
                             <nz-option *ngFor="let manager of editDetail.potentialParents" [nzLabel]="manager.name"

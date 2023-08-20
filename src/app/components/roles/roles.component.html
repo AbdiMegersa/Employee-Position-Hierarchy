@@ -20,9 +20,9 @@
                     nzType="zoom-in" nzTheme="outline"></span></button>
             <button nz-button nzType="primary" class="mx-1 rounded-full" (click)="scaleDown()"><span nz-icon
                     nzType="zoom-out" nzTheme="outline"></span>
-                </button>
+            </button>
             <button nz-button nzType="primary" class="mx-1 rounded-full" (click)="refetchRoles()">
-                <span >refresh</span>
+                <span>refresh</span>
             </button>
         </div>
 
@@ -32,49 +32,53 @@
             <div *nzModalContent>
                 <form [formGroup]="employeeForm" nz-form>
                     <nz-form-item>
-                        <nz-form-label nzFor="firstName" class="font-bold">First Name</nz-form-label>
+                        <nz-form-label nzFor="firstName" class="font-bold w-32 text-left">First Name</nz-form-label>
                         <nz-form-control nzHasFeedback nzErrorTip="first name is required">
                             <input nz-input formControlName="firstName" id="firstName" />
                         </nz-form-control>
                     </nz-form-item>
                     <nz-form-item>
-                        <nz-form-label nzFor="lastName" class="font-bold">Last Name</nz-form-label>
+                        <nz-form-label nzFor="lastName" class="font-bold w-32 text-left">Last Name</nz-form-label>
                         <nz-form-control nzHasFeedback nzErrorTip="Last name is required">
                             <input nz-input formControlName="lastName" id="lastName">
                         </nz-form-control>
                     </nz-form-item>
                     <nz-form-item>
-                        <nz-form-label nzFor="email" class="font-bold">Email</nz-form-label>
+                        <nz-form-label nzFor="email" class="font-bold w-32 text-left">Email</nz-form-label>
                         <nz-form-control nzHasFeedback nzErrorTip="Invalid Email">
                             <input nz-input formControlName="email" id="email">
                         </nz-form-control>
                     </nz-form-item>
                     <nz-form-item>
-                        <nz-form-label nzFor="phone" class="font-bold">Phone</nz-form-label>
+                        <nz-form-label nzFor="phone" class="font-bold w-32 text-left">Phone</nz-form-label>
                         <nz-form-control nzHasFeedback nzErrorTip="Invalid phone number">
                             <input nz-input formControlName="phone" id="phone">
                         </nz-form-control>
                     </nz-form-item>
+
+                    <!-- {{ employeeForm.value | json }} -->
                     <nz-form-item>
-                        <nz-form-label nzFor="gender" class="font-bold">Gender</nz-form-label>
+                        <nz-form-label nzFor="gender" class="font-bold w-32 text-left">Gender</nz-form-label>
                         <nz-form-control nzErrorTip="Gender is required">
                             <nz-select formControlName="gender" id="gender">
                                 <nz-option [nzLabel]="'Male'" [nzValue]="'M'"></nz-option>
                                 <nz-option [nzLabel]="'Female'" [nzValue]="'F'"></nz-option>
                             </nz-select>
                         </nz-form-control>
-                        <nz-form-label nzFor="birthDate" class="font-bold">Birth Date</nz-form-label>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label nzFor="birthDate" class="font-bold w-32 text-left">Birth Date</nz-form-label>
                         <nz-form-control nzHasFeedback nzErrorTip="Birth Date is required">
                             <!-- <nz-datepicker nzFormat="yyyy-MM-dd" formControlName="birthdate" id="birthDate"></nz-datepicker> -->
                             <nz-date-picker formControlName="birthDate" id="birthDate"></nz-date-picker>
                         </nz-form-control>
                     </nz-form-item>
-
                     <ng-template #loading>
-                        <span class="font-bold">Role/Position:</span> <nz-spin nzSimple [nzSize]="'small'"></nz-spin>
+                        <span class="font-bold w-32 text-left">Role/Position:</span> <nz-spin nzSimple
+                            [nzSize]="'small'"></nz-spin>
                     </ng-template>
                     <nz-form-item *ngIf="flatRoles; else loading">
-                        <nz-form-label nzFor="roleId" class="font-bold">Role</nz-form-label>
+                        <nz-form-label nzFor="roleId" class="font-bold w-32 text-left">Role</nz-form-label>
                         <nz-form-control nzErrorTip="Role is required">
                             <nz-select formControlName="roleId" id="roleId">
                                 <nz-option *ngFor="let role of flatRoles" [nzLabel]="role.name"
@@ -82,7 +86,6 @@
                             </nz-select>
                         </nz-form-control>
                     </nz-form-item>
-                    <!-- {{ employeeForm.value | json }} -->
                 </form>
 
             </div>
@@ -158,49 +161,49 @@
 
 <!-- ADD ROLE -->
 <!-- modal for adding new role -->
-<nz-modal [(nzVisible)]="addRoleDetail.visible" nzTitle="Add New Role" (nzOnCancel)="handleRoleCancel()">
-    <div *nzModalContent>
-        <form [formGroup]="roleForm" nz-form>
-            <nz-form-item>
-                <nz-form-label nzFor="name" class="font-bold">Role Name</nz-form-label>
-                <nz-form-control nzHasFeedback nzErrorTip="Role name is required">
-                    <input nz-input formControlName="name" id="role" />
-                </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-                <nz-form-label nzFor="description" class="font-bold">Role Description</nz-form-label>
-                <nz-form-control nzHasFeedback nzErrorTip="Role description is required">
-                    <textarea nz-input formControlName="description" id="description"></textarea>
-                </nz-form-control>
-            </nz-form-item>
-            <ng-template #empty class="flex">
-                <span class="font-bold">Manager/Supervisor:</span> <nz-spin nzSimple [nzSize]="'small'"></nz-spin>
-            </ng-template>
-            <nz-form-item *ngIf="flatRoles; else empty">
-                <nz-form-label nzFor="parentId" class="font-bold">Manager/Supervisor</nz-form-label>
-                <nz-form-control nzErrorTip="Manager is required">
-                    <nz-select formControlName="parentId" id="parentId">
-                        <nz-option *ngFor="let role of flatRoles" [nzLabel]="role.name" [nzValue]="role.id"></nz-option>
-                    </nz-select>
-                </nz-form-control>
-            </nz-form-item>
-        </form>
+<div *ngIf="addRoleDetail.visible">
+    <app-add-role-modal [addRoleDetail]="addRoleDetail" ></app-add-role-modal>
+    <!-- <nz-modal [(nzVisible)]="addRoleDetail.visible" nzTitle="Add New Role" (nzOnCancel)="handleRoleCancel()">
+        <div *nzModalContent>
+            <form [formGroup]="roleForm" nz-form>
+                <nz-form-item>
+                    <nz-form-label nzFor="name" class="font-bold w-32 text-left">Role Name</nz-form-label>
+                    <nz-form-control nzHasFeedback nzErrorTip="Role name is required">
+                        <input nz-input formControlName="name" id="role" />
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label nzFor="description" class="font-bold w-32 text-left">Role Description</nz-form-label>
+                    <nz-form-control nzHasFeedback nzErrorTip="Role description is required">
+                        <textarea nz-input formControlName="description" id="description"></textarea>
+                    </nz-form-control>
+                </nz-form-item>
+                <ng-template #empty class="flex">
+                    <span class="font-bold">Manager/Supervisor:</span> <nz-spin nzSimple [nzSize]="'small'"></nz-spin>
+                </ng-template>
+                <nz-form-item *ngIf="flatRoles; else empty">
+                    <nz-form-label nzFor="parentId" class="font-bold w-32 text-left">Supervisor</nz-form-label>
+                    <nz-form-control nzErrorTip="Manager is required">
+                        <nz-select formControlName="parentId" id="parentId">
+                            <nz-option *ngFor="let role of flatRoles" [nzLabel]="role.name"
+                                [nzValue]="role.id"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </form>
 
-    </div>
-    <div *nzModalFooter>
-        <button nz-button nzType="default" (click)="handleRoleCancel()">Cancel</button>
-        <button nz-button nzType="primary" (click)="handleRoleOk()" [nzLoading]="addRoleDetail.loading">Register
-            Role</button>
-    </div>
-</nz-modal>
-
+        </div>
+        <div *nzModalFooter>
+            <button nz-button nzType="default" (click)="handleRoleCancel()">Cancel</button>
+            <button nz-button nzType="primary" (click)="handleRoleOk()" [nzLoading]="addRoleDetail.loading">Register
+                Role</button>
+        </div>
+    </nz-modal> -->
+</div>
 <!-- VIEW ROLE -->
 <!-- nz modal for viewing a role -->
 <div *ngIf="viewDetail.visible">
-    <app-view-modal 
-        [viewDetail]="viewDetail"
-        (onCancelView)="handleRoleViewCancel()"
-    ></app-view-modal>
+    <app-view-modal [viewDetail]="viewDetail" (onCancelView)="handleRoleViewCancel()"></app-view-modal>
     <!-- <nz-modal [(nzVisible)]="viewDetail.visible" [nzTitle]="'Role Information'" (nzOnCancel)="handleRoleViewCancel()">
         <div *nzModalContent class="flex flex-col">
             <ng-template #loading>
@@ -227,11 +230,8 @@
 <!-- nz modal for editing a role -->
 <!-- cancel and save -->
 <div *ngIf="editDetail.visible">
-    <app-edit-modal 
-        [editDetail]="editDetail" 
-        (onSave)="handleRoleEditOk($event)" 
-        (onCancel)="handleRoleEditCancel()"
-    ></app-edit-modal>
+    <app-edit-modal [editDetail]="editDetail" (onSave)="handleRoleEditOk($event)"
+        (onCancel)="handleRoleEditCancel()"></app-edit-modal>
     <!-- <nz-modal [(nzVisible)]="editDetail.visible" [nzTitle]="'Edit Role'" (nzOnCancel)="handleRoleEditCancel()">
         <div *nzModalContent>
             <ng-template #loading>
@@ -280,6 +280,8 @@
 <!-- nz modal for deleting a role -->
 <!-- delete and cancel -->
 <div *ngIf="deleteDetail.visible">
+    <app-delete-modal [deleteDetail]="deleteDetail" (onCancel)="handleRoleDeleteCancel()"
+        (onOk)="handleRoleDeleteOk($event)"></app-delete-modal>
     <nz-modal [(nzVisible)]="deleteDetail.visible" [nzTitle]="'Delete Role'" (nzOnCancel)="handleRoleDeleteCancel()">
         <div *nzModalContent>
             <ng-template #isHead>

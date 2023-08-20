@@ -194,7 +194,7 @@ export class EmployeesComponent implements OnInit {
         roleId: this.employeeEditForm.value.roleId,
         photo: "string",
       }
-
+      console.log(employeeDetails)
       this.roleService.updateEmployee(employeeId, employeeDetails).pipe(
         catchError(Err => {
           this.message.error(Err.error.message, { nzDuration: 5000 })
@@ -203,6 +203,7 @@ export class EmployeesComponent implements OnInit {
         })
       ).subscribe(
         res => {
+          console.log(res)
           if (res) {
             this.store.dispatch([new FetchEmployees, new FetchFlatRoles, new FetchAll])
             this.message.success('Successfully Updated employee ' + res.fullName)

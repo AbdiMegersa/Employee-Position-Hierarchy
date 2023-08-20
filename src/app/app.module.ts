@@ -21,6 +21,8 @@ import { EmployeesComponent } from './components/employees/employees.component';
 import { ViewModalComponent } from './components/roles/components/view-modal/view-modal.component';
 import { DeleteModalComponent } from './components/roles/components/delete-modal/delete-modal.component';
 import { EditModalComponent } from './components/roles/components/edit-modal/edit-modal.component';
+import { AddEmployeeModalComponent } from './components/roles/components/add-employee-modal/add-employee-modal.component'
+import { AddRoleModalComponent } from './components/roles/components/add-role-modal/add-role-modal.component'
 
 import { NgxsModule } from '@ngxs/store';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
@@ -41,7 +43,9 @@ registerLocaleData(en);
     DeleteModalComponent,
     EditModalComponent,
     RoleDetailComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    AddEmployeeModalComponent,
+    AddRoleModalComponent
   ],
   imports: [
     BrowserModule,

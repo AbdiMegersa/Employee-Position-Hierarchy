@@ -1,1 +1,50 @@
-<p>delete-modal works!</p>
+<nz-modal [(nzVisible)]="deleteDetail.visible" [nzTitle]="'Delete Role'" (nzOnCancel)="cancelDelete()">
+    <div *nzModalContent>
+        <ng-template #isHead>
+            You can't delete Head position while it has subordinates
+        </ng-template>
+        <ng-container *ngIf="!deleteDetail.isHead; else isHead">
+
+            Are you sure you want to delete role {{ deleteDetail.data.name }} ?
+
+            <div *ngIf="deleteDetail.children.length > 0 && roleForm">
+                <form [formGroup]="roleForm" nz-form>
+                    <nz-form-item>
+                        <nz-form-label nzFor="parentId">New Supervisor for subordinates</nz-form-label>
+                        <ng-template #loading>
+                            <div class="flex justify-center items-center">
+                                <nz-spin nzSimple [nzSize]="'small'"></nz-spin>
+                            </div>
+                        </ng-template>
+                        <nz-form-control nzErrorTip="Supervisor is required"
+                            *ngIf="deleteDetail.potentialParents; else loading">
+                            <nz-select formControlName="parentId" id="parentId">
+                                <nz-option *ngFor="let manager of deleteDetail.potentialParents"
+                                    [nzLabel]="manager.name" [nzValue]="manager.id"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <!-- {{roleForm.value | json}} -->
+                </form>
+            </div>
+        </ng-container>
+    </div>
+    <div *nzModalFooter>
+        <button nz-button nzType="default" class="rounded font-bold" (click)="cancelDelete()">
+            Cancel
+        </button>
+        <ng-container *ngIf="deleteDetail.potentialParents; else leafDelete">
+            <button [disabled]="deleteDetail.potentialParents && roleForm.value.parentId ? false: true" nz-button
+                class="bg-red-600 text-white rounded font-bold" (click)="onDelete()"
+                [nzLoading]="deleteDetail.loading">
+                Delete
+            </button>
+        </ng-container>
+        <ng-template #leafDelete>
+            <button nz-button class="bg-red-600 text-white rounded font-bold" (click)="onDelete()"
+                [nzLoading]="deleteDetail.loading">
+                Delete
+            </button>
+        </ng-template>
+    </div>
+</nz-modal>
