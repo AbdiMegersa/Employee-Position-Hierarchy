@@ -1,0 +1,32 @@
+<li *ngFor="let item of treeData">
+    <details open>
+        <summary>
+            <span class="flex border justify-between items-center rounded-r px-2 bg-blue-200 hover:bg-blue-300">
+                {{ item.data.name }}
+                <button nz-dropdown [nzDropdownMenu]="menu" nzTrigger="hover">
+                    <i nz-icon nzType="ellipsis" class="mx-3 rounded-full p-1 hover:bg-blue-500"></i>
+                </button>
+                <nz-dropdown-menu #menu="nzDropdownMenu">
+                    <ul nz-menu class="shadow rounded">
+                        <li (click)="modal('VIEW_DATA', item.data)" nz-menu-item class="font-bold ">
+                            View</li>
+                        <li nz-menu-divider></li>
+                        <li (click)="modal('EDIT_DATA', item.data)" nz-menu-item
+                            class=" font-bold text-blue-600"> Edit <i nz-icon nzType="edit"
+                                class="mx-1"></i>
+                        </li>
+                        <li (click)="modal('DELETE_DATA', item.data)" nz-menu-item
+                            class="font-bold text-red-600">Delete <i nz-icon nzType="delete"
+                                class="mx-1"></i>
+                        </li>
+                    </ul>
+                </nz-dropdown-menu>
+            </span>
+        </summary>
+        <ul *ngIf="item.children">
+            <li *ngIf="item.children.length>0">
+                <app-tree-view [treeData]="item.children" (onMenu)="onMenu.emit($event)"></app-tree-view>
+            </li>
+        </ul>
+    </details>
+</li>

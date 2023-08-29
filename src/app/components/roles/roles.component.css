@@ -11,3 +11,7 @@
     filter: blur(1px);
   }
   
+
+  ul.tree > li:after, ul.tree > li:before {
+    display: none;
+}

@@ -1,0 +1,89 @@
+ul, li {
+    list-style: none;
+    margin-left: 20px;
+    font-size: 16px;
+}
+
+ul { 
+    list-style: none;
+    line-height: 2em;
+}
+
+details, summary {
+    list-style-type: none;
+}
+
+ul summary {
+    cursor: pointer;
+}
+
+ul summary::marker {
+    display: none !important;
+}
+
+ul summary::-webkit-details-marker { 
+    display: none !important;
+}
+
+ul li {
+    position: relative;
+    /* outline: 1px solid blue */
+    
+}
+
+ul li::before {
+    position: absolute;
+    left: -10px;
+    top: 0px;
+    border-left: 2px solid gray;
+    border-bottom: 2px solid gray;
+    content: "";
+    width: 10px;
+    height: 1em;
+}
+
+ul li:first-child::before{
+    /* display: none; */
+    border-left: none;
+}
+
+ul li::after {
+    position: absolute;
+    top: 1em;
+    left: -10px;
+    bottom: 0px;
+    border-left: 2px solid gray;
+    content: "";
+    width: 10px;
+    height: 100%;
+}
+
+ul li:last-child::after {
+    display: none;
+}
+
+ul.tree > li:after, ul.tree > li:before {
+    display: none;
+}
+
+
+ul summary::before {
+    position: absolute;
+    content: "+";
+    background: blue;
+    color:white;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 14px;
+    height: 14px;
+    display: block;
+    left: -20px;
+    top: 10px;
+    z-index: 999;
+    text-align:center;
+    line-height: .8em;
+}
+
+ul details[open] > summary::before{
+    content: "-";
+}

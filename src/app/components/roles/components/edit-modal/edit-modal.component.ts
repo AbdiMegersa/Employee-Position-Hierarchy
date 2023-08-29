@@ -1,9 +1,12 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms'
 import { FlatRole } from 'src/app/models/Role';
-import { Observable } from 'rxjs'
-import { Select } from '@ngxs/store';
+import { Observable, of, catchError } from 'rxjs'
+import { Select, Store } from '@ngxs/store';
 import { RoleState } from 'src/app/state/role.state';
+import { RoleService } from 'src/app/services/role.service';
+import { FetchAll, FetchEmployees, FetchFlatRoles } from 'src/app/state/role.actions';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-edit-modal',
@@ -20,7 +23,11 @@ export class EditModalComponent implements OnInit {
 
   @Select(RoleState.getFlatRoles()) flatRoles$!: Observable<FlatRole[]>;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder, 
+    private roleService: RoleService, 
+    private store: Store,
+    private message: NzMessageService) {
   }
 
   ngOnInit(): void {
@@ -45,7 +52,34 @@ export class EditModalComponent implements OnInit {
   }
 
   okEdit() {
-    this.onSave.emit(this.roleForm)
+    if (this.roleForm.valid) {
+      this.editDetail.processing = true;
+      if (this.editDetail.data) {
+        let id = this.editDetail.data.id;
+        this.roleService.updateRole(id, this.roleForm.value).pipe(
+          catchError((Err) => {
+            this.message.error(Err.error.message)
+            return of(null)
+          })
+        ).subscribe(
+          res => {
+            if (res) {
+              this.store.dispatch([new FetchAll(), new FetchEmployees(), new FetchFlatRoles()]);
+              this.message.success('Successfully updated role ' + res.name)
+              this.cancelEdit();
+            } else {
+              this.message.error("Role Could not be updated")
+            }
+          }
+        )
+
+      } else {
+        // console.log('Some problem in update');
+        this.editDetail.processing = false;
+      }
+    } else {
+      this.message.warning('Invalid Form')
+    }
   }
 
 

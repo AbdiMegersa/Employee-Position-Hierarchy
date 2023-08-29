@@ -29,7 +29,9 @@ import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { RoleState } from './state/role.state';
 import { NotFoundComponent } from './components/not-found/not-found.component'
 import { RoleDetailComponent } from './components/roles/components/role-detail/role-detail.component';
-// import { NgxMaskModule } from 'ngx-mask';
+import { TreeViewComponent } from './components/roles/components/tree-view/tree-view.component';
+import { OrgChartComponent } from './components/roles/components/org-chart/org-chart.component';
+
 
 registerLocaleData(en);
 
@@ -45,7 +47,9 @@ registerLocaleData(en);
     RoleDetailComponent,
     NotFoundComponent,
     AddEmployeeModalComponent,
-    AddRoleModalComponent
+    AddRoleModalComponent,
+    TreeViewComponent,
+    OrgChartComponent
   ],
   imports: [
     BrowserModule,

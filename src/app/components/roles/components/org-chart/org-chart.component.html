@@ -1,0 +1,25 @@
+<p-organizationChart [style.transform]="'scale(' + scaleClass + ')'" [value]="chartData">
+    <ng-template let-node pTemplate="person">
+        <a nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click"
+            class="text-center flex flex-col justify-center items-center">
+            <span class="border  p-1 rounded-full border border-slate-400" nz-icon nzType="user"
+                nzTheme="outline"></span>
+            <div class="px-2 my-1 rounded border border-slate-400">
+                <span class="font-bold text-gray-800 truncate">{{ node.data.name }}</span>
+            </div>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu class="shadow rounded">
+                    <li (click)="modal('VIEW_DATA', node.data)" nz-menu-item class="font-bold ">
+                        View</li>
+                    <li nz-menu-divider></li>
+                    <li (click)="modal('EDIT_DATA', node.data)" nz-menu-item class=" font-bold text-blue-600"> Edit <i
+                            nz-icon nzType="edit" class="mx-1"></i>
+                    </li>
+                    <li (click)="modal('DELETE_DATA', node.data)" nz-menu-item class="font-bold text-red-600">Delete <i
+                            nz-icon nzType="delete" class="mx-1"></i>
+                    </li>
+                </ul>
+            </nz-dropdown-menu>
+        </a>
+    </ng-template>
+</p-organizationChart>

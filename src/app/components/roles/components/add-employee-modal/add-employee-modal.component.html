@@ -1,3 +1,63 @@
-<p>
-  add-employee-modal works!
-</p>
+<nz-modal [(nzVisible)]="addEmployeeDetail.visible" nzTitle="Add New Employee" (nzOnCancel)="cancelAddEmployee()">
+  <div *nzModalContent>
+    <form [formGroup]="employeeForm" nz-form>
+      <nz-form-item>
+        <nz-form-label nzFor="firstName" class="font-bold w-32 text-left">First Name</nz-form-label>
+        <nz-form-control nzHasFeedback nzErrorTip="first name is required">
+          <input nz-input formControlName="firstName" id="firstName" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzFor="lastName" class="font-bold w-32 text-left">Last Name</nz-form-label>
+        <nz-form-control nzHasFeedback nzErrorTip="Last name is required">
+          <input nz-input formControlName="lastName" id="lastName">
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzFor="email" class="font-bold w-32 text-left">Email</nz-form-label>
+        <nz-form-control nzHasFeedback nzErrorTip="Invalid Email">
+          <input nz-input formControlName="email" id="email">
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzFor="phone" class="font-bold w-32 text-left">Phone</nz-form-label>
+        <nz-form-control nzHasFeedback nzErrorTip="Invalid phone number">
+          <input nz-input formControlName="phone" id="phone">
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzFor="gender" class="font-bold w-32 text-left">Gender</nz-form-label>
+        <nz-form-control nzErrorTip="Gender is required">
+          <nz-select formControlName="gender" id="gender">
+            <nz-option [nzLabel]="'Male'" [nzValue]="'M'"></nz-option>
+            <nz-option [nzLabel]="'Female'" [nzValue]="'F'"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label nzFor="birthDate" class="font-bold w-32 text-left">Birth Date</nz-form-label>
+        <nz-form-control nzHasFeedback nzErrorTip="Birth Date is required">
+          <nz-date-picker formControlName="birthDate" id="birthDate"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+      <ng-template #loading>
+        <span class="font-bold w-32 text-left">Role/Position:</span> <nz-spin nzSimple [nzSize]="'small'"></nz-spin>
+      </ng-template>
+      <nz-form-item *ngIf="flatRoles$ | async; else loading">
+        <nz-form-label nzFor="roleId" class="font-bold w-32 text-left">Role</nz-form-label>
+        <nz-form-control nzErrorTip="Role is required">
+          <nz-select formControlName="roleId" id="roleId">
+            <nz-option *ngFor="let role of flatRoles$ | async" [nzLabel]="role.name" [nzValue]="role.id"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+
+  </div>
+  <div *nzModalFooter>
+    <button nz-button nzType="default" (click)="cancelAddEmployee()">Cancel</button>
+    <button nz-button nzType="primary" (click)="onOk()" [nzLoading]="addEmployeeDetail.processing">Register
+      Employee</button>
+  </div>
+</nz-modal>

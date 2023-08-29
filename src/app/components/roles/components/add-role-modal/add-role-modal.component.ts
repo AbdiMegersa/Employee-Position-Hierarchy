@@ -16,7 +16,6 @@ import { Observable } from 'rxjs'
 export class AddRoleModalComponent implements OnInit {
   @Input() addRoleDetail: any;
   @Output() onCancel = new EventEmitter();
-  @Output() onOk = new EventEmitter<any>();
 
   roleForm!: FormGroup;
   @Select(RoleState.getFlatRoles()) flatRoles$!: Observable<FlatRole[]>
@@ -34,25 +33,11 @@ export class AddRoleModalComponent implements OnInit {
     })
   }
 
-  ngOnInit(): void {
-    this.roleService.fetchFlatRoles().subscribe(res => {
-      if (res) {
-        this.addRoleDetail.data = res
-        console.log('data for flat roles ', res)
-      }
-      else this.addRoleDetail.data = null
-    })
-  }
+  ngOnInit(): void {}
 
   cancelAddRole() {
-    // this.onCancel.emit()
-    this.addRoleDetail = {
-      visible: false,
-      loading: false,
-      selected: null,
-      data: null
-    }
-    this.roleForm.reset()
+    this.roleForm.reset();
+    this.onCancel.emit()
   }
 
   addRole() {
