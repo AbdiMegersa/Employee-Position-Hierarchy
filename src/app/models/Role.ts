@@ -122,24 +122,3 @@ export interface EmployeeBulk {
 
 }
 
-
-// {
-//   "id": "string",
-//   "name": "string",
-//   "description": "string",
-//   "parentId": "string",
-//   "employees": [
-//     {
-//       "id": "string",
-//       "fullName": "string",
-//       "email": "string",
-//       "phone": "string",
-//       "gender": "M",
-//       "birthDate": "2023-08-11T13:18:38.658Z",
-//       "hireDate": "2023-08-11T13:18:38.658Z",
-//       "roleId": "string",
-//       "photo": "string",
-//       "role": "string"
-//     }
-//   ]
-// }
